@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="25dp"
-    android:layout_marginRight="25dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
     android:orientation="vertical"
     tools:context="com.plantabaixa.android.MainActivity">
 
@@ -22,26 +22,33 @@
         android:id="@+id/values_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:background="@color/colorAccentLight"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="5dp">
 
-        <TextView
-            android:id="@+id/tv_d1_v1"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="20"
-            android:textSize="80dip"
-            android:textStyle="bold" />
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
 
-        <TextView
-            android:id="@+id/tv_d1_v2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=",1"
-            android:textSize="40sp" />
+            <TextView
+                android:id="@+id/tv_d1_v1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20"
+                android:textSize="70dip"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_d1_v2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=",13"
+                android:textSize="40sp" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -53,28 +60,83 @@
             android:textSize="40dip"
             android:textStyle="bold" />
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tv_d2_v1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10"
+                android:textSize="70dip"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_d2_v2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=",71"
+                android:textSize="40dip" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_d1"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="20dp"
+        android:text="Primeira Dimensão" />
+
+    <Button
+        android:id="@+id/btn_d2"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:text="Segunda Dimensão" />
+
+    <LinearLayout
+        android:id="@+id/m2_calc_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccentLight"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
         <TextView
-            android:id="@+id/tv_d2_v1"
+            android:id="@+id/tv_m2_d1_v1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10"
+            android:text="215"
             android:textSize="80dip"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_d2_v2"
+            android:id="@+id/tv_m2_d1_v2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=",7"
+            android:text=",29"
             android:textSize="40dip" />
-    </LinearLayout>
 
-    <Button
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:text="Calcular" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="m²"
+            android:textSize="70dip"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </LinearLayout>
