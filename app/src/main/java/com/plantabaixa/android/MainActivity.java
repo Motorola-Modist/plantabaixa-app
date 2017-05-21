@@ -12,6 +12,9 @@ import com.plantabaixa.android.sensor.SensorEventListener;
 import com.plantabaixa.android.sensor.SonarDistanceSensor;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
+    private static final int DISTANCE_NONE = 0;
+    private static final int DISTANCE_FIRST = 1;
+    private static final int DISTANCE_SECOND = 2;
 
     SonarDistanceSensor sonarDistanceSensor;
 
@@ -28,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     Button btnDimensao1;
     Button btnDimensao2;
+
+    int fetchDistanceFlag = DISTANCE_NONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,40 +52,47 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btnDimensao1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchDistance(1);
-                setDistance(1, 2);
+                fetchDistance(DISTANCE_FIRST);
             }
         });
 
         btnDimensao2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchDistance(1);
-                setDistance(2, 2);
+                fetchDistance(DISTANCE_SECOND);
             }
         });
 
         sonarDistanceSensor = new SonarDistanceSensor(this);
     }
 
-    private void fetchDistance(int i) {
-
+    /**
+     * Distance is one of {@link #DISTANCE_FIRST} or {@link #DISTANCE_SECOND}.
+     *
+     * @param distance
+     */
+    private void fetchDistance(int distance) {
+        fetchDistanceFlag = distance;
     }
 
     private void setDistance(int i, float distance) {
+        String[] str = splitDistance(distance);
         switch (i) {
-            case 1:
+            case DISTANCE_FIRST:
                 distancia1 = distance;
-                tvDistancia1Metros.setText("99");
-                tvDistancia1Centimetros.setText("99");
+                tvDistancia1Metros.setText(str[0]);
+                tvDistancia1Centimetros.setText(str[1]);
                 btnDimensao1.setVisibility(View.GONE);
                 btnDimensao2.setVisibility(View.VISIBLE);
+
+                tvDistancia2Metros.setText("0");
+                tvDistancia2Centimetros.setText("0");
                 vMetroQuadradoContainer.setVisibility(View.GONE);
                 break;
-            case 2:
+            case MainActivity.DISTANCE_SECOND:
                 distancia2 = distance;
-                tvDistancia2Metros.setText("99");
-                tvDistancia2Centimetros.setText("99");
+                tvDistancia2Metros.setText(str[0]);
+                tvDistancia2Centimetros.setText(str[1]);
                 btnDimensao1.setVisibility(View.VISIBLE);
                 btnDimensao2.setVisibility(View.GONE);
                 calculaMetroQuadrado(distancia1, distancia2);
@@ -89,21 +101,44 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void calculaMetroQuadrado(float distancia1, float distancia2) {
-        tvMetroQuadradoMetros.setText("999");
-        tvMetroQuadradoCentimetros.setText("99");
+        String[] str = splitDistance(distancia1 * distancia2);
+        tvMetroQuadradoMetros.setText(str[0]);
+        tvMetroQuadradoCentimetros.setText(str[1]);
         vMetroQuadradoContainer.setVisibility(View.VISIBLE);
 
     }
 
     @Override
     public void onSensorChanged(com.plantabaixa.android.sensor.SensorEvent sensorEvent) {
-        Log.i("TAG", "Segundos: " + sensorEvent.values[0]);
-        Log.i("TAG", "Polegadas: " + sensorEvent.values[1]);
-        Log.i("TAG", "Centimetros: " + sensorEvent.values[2]);
+        float seconds = sensorEvent.values[0];
+        float inches = sensorEvent.values[1];
+        float cm = sensorEvent.values[2];
+
+        Log.i("TAG", "Segundos: " + seconds);
+        Log.i("TAG", "Polegadas: " + inches);
+        Log.i("TAG", "Centimetros: " + cm);
+
+        if (fetchDistanceFlag != DISTANCE_NONE) {
+            // set distance if it was asked
+            setDistance(fetchDistanceFlag, cm);
+            fetchDistanceFlag = DISTANCE_NONE;
+        }
     }
 
     @Override
     public void onAccuracyChanged(Sensor s, int accuracy) {
 
+    }
+
+    /**
+     * Transforms the float 12.3456789 to ["12", "34"]
+     * @return
+     */
+    private String[] splitDistance(float value) {
+        String str = String.valueOf(value);
+        String[] arr = str.split("\\.");
+        // Jeito porco de """arredondar"""
+        arr[1] = arr[1].substring(0, 2);
+        return arr;
     }
 }

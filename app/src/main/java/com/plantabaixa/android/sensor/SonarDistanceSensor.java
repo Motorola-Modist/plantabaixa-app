@@ -24,8 +24,8 @@ public class SonarDistanceSensor {
                 ArrayList l = getRandomNumbers();
                 listener.onSensorChanged(new SensorEvent(new float[]{
                         (float) l.get(0) * 10,
-                        (float) l.get(1) * 100,
-                        (float) l.get(2) * 100
+                        (float) l.get(1) * 10,
+                        (float) l.get(2) * 10
                 }));
 
                 scheduleTrigger();
