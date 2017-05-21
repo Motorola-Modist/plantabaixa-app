@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-        sonarDistanceSensor = new SonarDistanceSensor(this);
+//        sonarDistanceSensor = new SonarDistanceSensor(this);
     }
 
     /**
@@ -124,17 +124,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(com.plantabaixa.android.sensor.SensorEvent sensorEvent) {
-        float seconds = sensorEvent.values[0];
-        float inches = sensorEvent.values[1];
-        float cm = sensorEvent.values[2];
-
-        Log.i("TAG", "Segundos: " + seconds);
-        Log.i("TAG", "Polegadas: " + inches);
-        Log.i("TAG", "Centimetros: " + cm);
+        float cm = sensorEvent.values[2], metros;
+        Log.i(AppConstants.TAG, "Segundos   : " + sensorEvent.values[0]);
+        Log.i(AppConstants.TAG, "Polegadas  : " + sensorEvent.values[1]);
+        Log.i(AppConstants.TAG, "Centímetros: " + cm);
+        metros = cm / 100;
+        Log.i(AppConstants.TAG, "Metros: " + metros);
 
         if (fetchDistanceFlag != DISTANCE_NONE) {
             // set distance if it was asked
-            setDistance(fetchDistanceFlag, cm);
+            setDistance(fetchDistanceFlag, metros);
             fetchDistanceFlag = DISTANCE_NONE;
             setLoading(false);
         }
@@ -206,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void initSensor() {
         if (null == ultrasonicSensor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             ultrasonicSensor = new UltrasonicSensor(this, this);
+            ultrasonicSensor.setSensorEvent(this);
         }
     }
 

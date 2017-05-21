@@ -18,7 +18,8 @@ import java.nio.ByteOrder;
  */
 
 public class UltrasonicSensor {
-    // long interval;
+    private static final byte[] MODIST_RAW_COMMAND_SONAR = {0x02, 0x00};
+    private static final long INTERVAL = 1000;
     RawPersonality personality;
     UltrasonicSensorListener listener;
     SensorEventListener sensorEvent;
@@ -28,6 +29,10 @@ public class UltrasonicSensor {
         this.listener = listener;
     }
 
+    public void setSensorEvent(SensorEventListener sensorEvent) {
+        this.sensorEvent = sensorEvent;
+    }
+
     public void start(long milliseconds) {
         long interval = milliseconds;
         byte intervalLow = (byte) (interval & 0x00FF);
@@ -35,6 +40,19 @@ public class UltrasonicSensor {
         byte[] cmd = {Constants.TEMP_RAW_COMMAND_ON, Constants.SENSOR_COMMAND_SIZE,
                 intervalLow, intervalHigh};
         personality.getRaw().executeRaw(cmd);
+    }
+
+    private void schedule(long interval) {
+        /**
+         *  Personality has the RAW interface, query the information data via RAW command, the data
+         *  will send back from MDK with flag TEMP_RAW_COMMAND_INFO and TEMP_RAW_COMMAND_CHALLENGE.
+         */
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                personality.getRaw().executeRaw(MODIST_RAW_COMMAND_SONAR);
+            }
+        }, interval);
     }
 
     public void resume() {
@@ -111,16 +129,21 @@ public class UltrasonicSensor {
     private void onRawData(byte[] buffer, int length) {
         /** Parse raw data to header and payload */
         int cmd = buffer[Constants.CMD_OFFSET] & ~Constants.TEMP_RAW_COMMAND_RESP_MASK & 0xFF;
+        if (cmd == 0) {
+            cmd = Constants.TEMP_RAW_COMMAND_DATA;
+        }
         int payloadLength = buffer[Constants.SIZE_OFFSET];
 
         /** Checking the size of buffer we got to ensure sufficient bytes */
-        if (payloadLength + Constants.CMD_LENGTH + Constants.SIZE_LENGTH != length) {
+        if (cmd != Constants.TEMP_RAW_COMMAND_DATA && payloadLength + Constants.CMD_LENGTH + Constants.SIZE_LENGTH != length) {
             return;
         }
 
+        payloadLength = 4;
+
         /** Parser payload data */
         byte[] payload = new byte[payloadLength];
-        System.arraycopy(buffer, Constants.PAYLOAD_OFFSET, payload, 0, payloadLength);
+        System.arraycopy(buffer, 0, payload, 0, payloadLength);
         parseResponse(cmd, payloadLength, payload);
     }
 
@@ -128,16 +151,7 @@ public class UltrasonicSensor {
      * RAW I/O of attached mod device is ready to use
      */
     private void onRawInterfaceReady() {
-        /**
-         *  Personality has the RAW interface, query the information data via RAW command, the data
-         *  will send back from MDK with flag TEMP_RAW_COMMAND_INFO and TEMP_RAW_COMMAND_CHALLENGE.
-         */
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                personality.getRaw().executeRaw(Constants.RAW_CMD_INFO);
-            }
-        }, 500);
+        schedule(INTERVAL);
     }
 
     /**
@@ -194,22 +208,19 @@ public class UltrasonicSensor {
                 return;
             }
 
-            int dataLow = payload[Constants.CMD_DATA_LOWDATA_OFFSET] & 0xFF;
-            int dataHigh = payload[Constants.CMD_DATA_HIGHDATA_OFFSET] & 0xFF;
-
             /** The raw temperature sensor data */
-            int data = dataHigh << 8 | dataLow;
+            int microseconds = ByteBuffer.wrap(payload).getInt();
+            double cm = (microseconds / 2) / 29.1;
+            double inches = (microseconds / 2) / 74;
 
-            /** The temperature */
-            double temp = ((0 - 0.03) * data) + 128;
-
-            Log.i(Constants.TAG, "onDistanceUpdate. Data.: " + data);
+            Log.i(Constants.TAG, "onDistanceUpdate. Data.: " + microseconds);
             if (listener != null) {
-                listener.onDistanceUpdate(0, 0, 0);
+                listener.onDistanceUpdate(microseconds, inches, cm);
             }
             if (sensorEvent != null) {
-                sensorEvent.onSensorChanged(new SensorEvent(new float[] { 0, 0, (float) data}));
+                sensorEvent.onSensorChanged(new SensorEvent(new float[] { microseconds, (float) inches, (float) cm}));
             }
+            schedule(INTERVAL);
         } else if (cmd == Constants.TEMP_RAW_COMMAND_CHALLENGE) {
             /** Got CHALLENGE command from personality board */
 
