@@ -80,9 +80,9 @@ public class RawDataActivity extends AppCompatActivity implements TemperatureSen
      * Initial MDK Personality interface
      */
     private void initSensor() {
-        if (null == temperatureSensor) {
-            temperatureSensor = new TemperatureSensor(this, this);
-        }
+//        if (null == temperatureSensor) {
+//            temperatureSensor = new TemperatureSensor(this, this);
+//        }
         if (null == ultrasonicSensor) {
             ultrasonicSensor = new UltrasonicSensor(this, this);
         }
