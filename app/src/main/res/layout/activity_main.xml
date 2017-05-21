@@ -1,18 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="25dp"
+    android:layout_marginRight="25dp"
+    android:orientation="vertical"
     tools:context="com.plantabaixa.android.MainActivity">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_calc_m2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="50dp"
+        android:gravity="center_horizontal"
+        android:text="Calcular m²"
+        android:textSize="40sp"
+        android:textStyle="bold" />
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/values_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="@color/colorAccentLight"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_d1_v1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20"
+            android:textSize="80dip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_d1_v2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=",1"
+            android:textSize="40sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:text="x"
+            android:textSize="40dip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_d2_v1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:textSize="80dip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_d2_v2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=",7"
+            android:textSize="40dip" />
+    </LinearLayout>
+
+    <Button
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:text="Calcular" />
+
+</LinearLayout>
