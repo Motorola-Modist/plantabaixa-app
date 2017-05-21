@@ -2,6 +2,34 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.plantabaixa.android">
 
+    <!--
+        As not all Android powered smartphones support the Moto Mods APIs, include
+        a uses-feature statement for com.motorola.hardware.mods element.
+
+        When you declare android:required="true", you are specifying that the application
+        cannot function, or is not designed to function, when the specified feature is not
+        present on the device.
+
+        When you declare android:required="false", it means that the application prefers to
+        use the feature if present on the device, but that it is designed to function without
+        the com.motorola.hardware.mods feature, if necessary.
+
+        The default value for android:required if not declared is "true".
+    -->
+    <uses-feature android:name="com.motorola.hardware.mods"/>
+
+    <!--
+        If your application uses any of functionality of the ModManager, it needs to declare
+        use of the PERMISSION_MOD_ACCESS_INFO permission.
+
+        If your application needs access to the RAW interface, your manifest should declare
+        that your application needs the PERMISSION_USE_RAW_PROTOCOL permission. Your code also
+        needs to check for this permission grant at runtime, and prompt the user to grant this
+        permission to your application if needed.
+    -->
+    <uses-permission android:name="com.motorola.mod.permission.MOD_ACCESS_INFO" />
+    <uses-permission android:name="com.motorola.mod.permission.RAW_PROTOCOL" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".RawDataActivity"
+            android:label="@string/title_activity_raw_data"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
