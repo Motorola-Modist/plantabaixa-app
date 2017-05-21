@@ -41,6 +41,19 @@ public class RawDataActivity extends AppCompatActivity implements TemperatureSen
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        /** Initial MDK Personality interface */
+        initSensor();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -61,19 +74,6 @@ public class RawDataActivity extends AppCompatActivity implements TemperatureSen
             ultrasonicSensor.release();
             ultrasonicSensor = null;
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        /** Initial MDK Personality interface */
-        initSensor();
     }
 
     /**

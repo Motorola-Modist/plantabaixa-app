@@ -1,6 +1,8 @@
 package com.plantabaixa.android;
 
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -8,15 +10,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.motorola.mod.ModDevice;
+import com.motorola.mod.ModManager;
+import com.plantabaixa.android.rawdata.UltrasonicSensor;
+import com.plantabaixa.android.rawdata.UltrasonicSensorListener;
 import com.plantabaixa.android.sensor.SensorEventListener;
 import com.plantabaixa.android.sensor.SonarDistanceSensor;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity implements SensorEventListener, UltrasonicSensorListener {
+    private static final int RAW_PERMISSION_REQUEST_CODE = 100;
+
     private static final int DISTANCE_NONE = 0;
     private static final int DISTANCE_FIRST = 1;
     private static final int DISTANCE_SECOND = 2;
 
     SonarDistanceSensor sonarDistanceSensor;
+    UltrasonicSensor ultrasonicSensor;
 
     float distancia1, distancia2;
 
@@ -138,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     /**
      * Transforms the float 12.3456789 to ["12", "34"]
+     *
      * @return
      */
     private String[] splitDistance(float value) {
@@ -149,10 +159,94 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void setLoading(boolean loading) {
-        if(loading) {
+        if (loading) {
             pgLoading.setVisibility(View.VISIBLE);
         } else {
             pgLoading.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    //// ULTRASONIC RAW DATA TRANSFER
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        /** Initial MDK Personality interface */
+        initSensor();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        releaseSensor();
+    }
+
+
+    /**
+     * Clean up MDK Personality interface
+     */
+    private void releaseSensor() {
+        /** Clean up MDK Personality interface */
+        if (null != ultrasonicSensor) {
+            ultrasonicSensor.release();
+            ultrasonicSensor = null;
+        }
+    }
+
+    /**
+     * Initial MDK Personality interface
+     */
+    private void initSensor() {
+        if (null == ultrasonicSensor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ultrasonicSensor = new UltrasonicSensor(this, this);
+        }
+    }
+
+    @Override
+    public void onModDeviceAttachmentChanged(ModDevice device) {
+
+    }
+
+    @Override
+    public void onFirstResponse(boolean challengePassed) {
+        ultrasonicSensor.start(1000);
+    }
+
+    @Override
+    public void onRequestRawPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{ModManager.PERMISSION_USE_RAW_PROTOCOL},
+                    RAW_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onDistanceUpdate(double seconds, double inches, double centimeters) {
+
+    }
+
+    /**
+     * Handle permission request result
+     */
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == RAW_PERMISSION_REQUEST_CODE && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (null != ultrasonicSensor) {
+                    /** Permission grant, try to check RAW I/O of mod device */
+                    ultrasonicSensor.resume();
+                }
+            } else {
+                // TODO: user declined for RAW accessing permission.
+                // You may need pop up a description dialog or other prompts to explain
+                // the app cannot work without the permission granted.
+            }
         }
     }
 }

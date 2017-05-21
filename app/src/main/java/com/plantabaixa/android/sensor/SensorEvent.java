@@ -7,7 +7,7 @@ package com.plantabaixa.android.sensor;
 public class SensorEvent {
     public float[] values;
 
-    SensorEvent(float[] values) {
+    public SensorEvent(float[] values) {
         this.values = values;
     }
 }

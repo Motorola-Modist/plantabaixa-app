@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.motorola.mod.ModDevice;
 import com.motorola.mod.ModManager;
+import com.plantabaixa.android.sensor.SensorEvent;
+import com.plantabaixa.android.sensor.SensorEventListener;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,6 +21,7 @@ public class UltrasonicSensor {
     // long interval;
     RawPersonality personality;
     UltrasonicSensorListener listener;
+    SensorEventListener sensorEvent;
 
     public UltrasonicSensor(Context context, UltrasonicSensorListener listener) {
         initPersonality(context);
@@ -201,8 +204,12 @@ public class UltrasonicSensor {
             double temp = ((0 - 0.03) * data) + 128;
 
             Log.i(Constants.TAG, "onDistanceUpdate. Data.: " + data);
-            if (listener != null)
+            if (listener != null) {
                 listener.onDistanceUpdate(0, 0, 0);
+            }
+            if (sensorEvent != null) {
+                sensorEvent.onSensorChanged(new SensorEvent(new float[] { 0, 0, (float) data}));
+            }
         } else if (cmd == Constants.TEMP_RAW_COMMAND_CHALLENGE) {
             /** Got CHALLENGE command from personality board */
 
