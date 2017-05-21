@@ -75,10 +75,16 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=","
+                android:textSize="40dip" />
+
+            <TextView
                 android:id="@+id/tv_d2_v2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=",71"
+                android:text="71"
                 android:textSize="40dip" />
         </LinearLayout>
     </LinearLayout>
@@ -92,7 +98,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:layout_marginTop="20dp"
-        android:text="Primeira Dimensão" />
+        android:text="Ler primeira dimensão" />
 
     <Button
         android:id="@+id/btn_d2"
@@ -103,8 +109,8 @@
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:layout_marginTop="20dp"
-        android:visibility="gone"
-        android:text="Segunda Dimensão" />
+        android:text="Ler segunda dimensão"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/m2_calc_result"
@@ -113,7 +119,8 @@
         android:background="@color/colorAccentLight"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tv_m2_d1_v1"
@@ -124,10 +131,16 @@
             android:textStyle="bold" />
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=","
+            android:textSize="40dip" />
+
+        <TextView
             android:id="@+id/tv_m2_d1_v2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=",29"
+            android:text="29"
             android:textSize="40dip" />
 
         <TextView
