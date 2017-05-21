@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     float distancia1, distancia2;
 
+    View pgLoading;
+
     TextView tvDistancia1Metros;
     TextView tvDistancia1Centimetros;
     TextView tvDistancia2Metros;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        pgLoading = findViewById(R.id.progress);
         tvDistancia1Metros = (TextView) findViewById(R.id.tv_d1_v1);
         tvDistancia1Centimetros = (TextView) findViewById(R.id.tv_d1_v2);
         tvDistancia2Metros = (TextView) findViewById(R.id.tv_d2_v1);
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btnDimensao1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setLoading(true);
                 fetchDistance(DISTANCE_FIRST);
             }
         });
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btnDimensao2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setLoading(true);
                 fetchDistance(DISTANCE_SECOND);
             }
         });
@@ -122,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // set distance if it was asked
             setDistance(fetchDistanceFlag, cm);
             fetchDistanceFlag = DISTANCE_NONE;
+            setLoading(false);
         }
     }
 
@@ -140,5 +146,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // Jeito porco de """arredondar"""
         arr[1] = arr[1].substring(0, 2);
         return arr;
+    }
+
+    private void setLoading(boolean loading) {
+        if(loading) {
+            pgLoading.setVisibility(View.VISIBLE);
+        } else {
+            pgLoading.setVisibility(View.INVISIBLE);
+        }
     }
 }

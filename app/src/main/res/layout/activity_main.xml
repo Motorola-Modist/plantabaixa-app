@@ -25,13 +25,24 @@
         android:layout_marginTop="10dp"
         android:background="@color/colorAccentLight"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="5dp">
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-6dp"
+            android:indeterminate="true"
+            android:visibility="invisible" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -104,9 +115,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="-20dp"
+            android:paddingBottom="5dp"
             android:text="metros"
-            android:textSize="30dp"
-            android:layout_marginTop="-20dp"/>
+            android:textSize="30dp" />
     </LinearLayout>
 
     <Button
@@ -118,7 +130,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:layout_marginTop="20dp"
-        android:text="Ler primeira dimensão" />
+        android:text="Ler 1ª dimensão" />
 
     <Button
         android:id="@+id/btn_d2"
@@ -129,7 +141,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:layout_marginTop="20dp"
-        android:text="Ler segunda dimensão"
+        android:text="Ler 2ª dimensão"
         android:visibility="gone" />
 
     <LinearLayout
