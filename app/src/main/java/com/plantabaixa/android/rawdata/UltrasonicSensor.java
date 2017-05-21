@@ -15,12 +15,12 @@ import java.nio.ByteOrder;
  * Created by gventura on 20/05/2017.
  */
 
-public class TemperatureSensor {
+public class UltrasonicSensor {
     // long interval;
     RawPersonality personality;
-    TemperatureSensorListener listener;
+    UltrasonicSensorListener listener;
 
-    public TemperatureSensor(Context context, TemperatureSensorListener listener) {
+    public UltrasonicSensor(Context context, UltrasonicSensorListener listener) {
         initPersonality(context);
         this.listener = listener;
     }
@@ -200,9 +200,9 @@ public class TemperatureSensor {
             /** The temperature */
             double temp = ((0 - 0.03) * data) + 128;
 
-            Log.i(Constants.TAG, "onTemperatureData. Temp.: " + temp);
+            Log.i(Constants.TAG, "onDistanceUpdate. Data.: " + data);
             if (listener != null)
-                listener.onTemperatureData(temp);
+                listener.onDistanceUpdate(0, 0, 0);
         } else if (cmd == Constants.TEMP_RAW_COMMAND_CHALLENGE) {
             /** Got CHALLENGE command from personality board */
 
@@ -213,32 +213,22 @@ public class TemperatureSensor {
                 return;
             }
 
-            byte[] resp = Constants.getAESECBDecryptor(Constants.AES_ECB_KEY, payload);
-            if (resp != null) {
-                /** Got decoded CHALLENGE payload */
-                ByteBuffer buffer = ByteBuffer.wrap(resp);
-                buffer.order(ByteOrder.LITTLE_ENDIAN); // lsb -> msb
-                long littleLong = buffer.getLong();
-                littleLong += Constants.CHALLENGE_ADDATION;
+            /** Got decoded CHALLENGE payload */
+            ByteBuffer buffer = ByteBuffer.wrap(payload);
+            buffer.order(ByteOrder.LITTLE_ENDIAN); // lsb -> msb
+            long littleLong = buffer.getLong();
+            littleLong += Constants.CHALLENGE_ADDATION;
 
-                ByteBuffer buf = ByteBuffer.allocate(Long.SIZE / Byte.SIZE).order(ByteOrder.LITTLE_ENDIAN);
-                buf.putLong(littleLong);
-                byte[] respData = buf.array();
+            ByteBuffer buf = ByteBuffer.allocate(Long.SIZE / Byte.SIZE).order(ByteOrder.LITTLE_ENDIAN);
+            buf.putLong(littleLong);
+            byte[] respData = buf.array();
 
-                /** Send challenge response back to mod device */
-                byte[] aes = Constants.getAESECBEncryptor(Constants.AES_ECB_KEY, respData);
-                if (aes != null) {
-                    byte[] challenge = new byte[aes.length + 2];
-                    challenge[0] = Constants.TEMP_RAW_COMMAND_CHLGE_RESP;
-                    challenge[1] = (byte) aes.length;
-                    System.arraycopy(aes, 0, challenge, 2, aes.length);
-                    personality.getRaw().executeRaw(challenge);
-                } else {
-                    Log.e(Constants.TAG, "AES encrypt failed.");
-                }
-            } else {
-                Log.e(Constants.TAG, "AES decrypt failed.");
-            }
+            /** Send challenge response back to mod device */
+            byte[] challenge = new byte[respData.length + 2];
+            challenge[0] = Constants.TEMP_RAW_COMMAND_CHLGE_RESP;
+            challenge[1] = (byte) respData.length;
+            System.arraycopy(respData, 0, challenge, 2, respData.length);
+            personality.getRaw().executeRaw(challenge);
         } else if (cmd == Constants.TEMP_RAW_COMMAND_CHLGE_RESP) {
             /** Get challenge command response */
 

@@ -14,11 +14,14 @@ import com.motorola.mod.ModDevice;
 import com.motorola.mod.ModManager;
 import com.plantabaixa.android.rawdata.TemperatureSensor;
 import com.plantabaixa.android.rawdata.TemperatureSensorListener;
+import com.plantabaixa.android.rawdata.UltrasonicSensor;
+import com.plantabaixa.android.rawdata.UltrasonicSensorListener;
 
-public class RawDataActivity extends AppCompatActivity implements TemperatureSensorListener {
+public class RawDataActivity extends AppCompatActivity implements TemperatureSensorListener, UltrasonicSensorListener {
     private static final int RAW_PERMISSION_REQUEST_CODE = 100;
 
-    private TemperatureSensor sensor;
+    private TemperatureSensor temperatureSensor;
+    private UltrasonicSensor ultrasonicSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +52,14 @@ public class RawDataActivity extends AppCompatActivity implements TemperatureSen
      */
     private void releaseSensor() {
         /** Clean up MDK Personality interface */
-        if (null != sensor) {
-            sensor.release();
-            sensor = null;
+        if (null != temperatureSensor) {
+            temperatureSensor.release();
+            temperatureSensor = null;
+        }
+        /** Clean up MDK Personality interface */
+        if (null != ultrasonicSensor) {
+            ultrasonicSensor.release();
+            ultrasonicSensor = null;
         }
     }
 
@@ -72,18 +80,23 @@ public class RawDataActivity extends AppCompatActivity implements TemperatureSen
      * Initial MDK Personality interface
      */
     private void initSensor() {
-        if (null == sensor) {
-            sensor = new TemperatureSensor(this, this);
+        if (null == temperatureSensor) {
+            temperatureSensor = new TemperatureSensor(this, this);
+        }
+        if (null == ultrasonicSensor) {
+            ultrasonicSensor = new UltrasonicSensor(this, this);
         }
     }
 
     @Override
-    public void onModDevice(ModDevice device) {
+    public void onModDeviceAttachmentChanged(ModDevice device) {
+
     }
 
     @Override
     public void onFirstResponse(boolean challengePassed) {
-        sensor.start(1000);
+        temperatureSensor.start(1000);
+        ultrasonicSensor.start(1000);
     }
 
     @Override
@@ -94,15 +107,24 @@ public class RawDataActivity extends AppCompatActivity implements TemperatureSen
         }
     }
 
+    @Override
+    public void onDistanceUpdate(double seconds, double inches, double centimeters) {
+
+    }
+
     /**
      * Handle permission request result
      */
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == RAW_PERMISSION_REQUEST_CODE && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (null != sensor) {
+                if (null != temperatureSensor) {
                     /** Permission grant, try to check RAW I/O of mod device */
-                    sensor.resume();
+                    temperatureSensor.resume();
+                }
+                if (null != ultrasonicSensor) {
+                    /** Permission grant, try to check RAW I/O of mod device */
+                    ultrasonicSensor.resume();
                 }
             } else {
                 // TODO: user declined for RAW accessing permission.

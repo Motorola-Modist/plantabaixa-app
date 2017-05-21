@@ -2,8 +2,9 @@ package com.plantabaixa.android;
 
 import android.content.Intent;
 import android.hardware.Sensor;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,13 +21,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btnRaw = (Button)findViewById(R.id.btn_raw_data);
+        Button btnRaw = (Button) findViewById(R.id.btn_raw_data);
         btnRaw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, RawDataActivity.class));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    startActivity(new Intent(MainActivity.this, RawDataActivity.class));
+                }
             }
         });
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            btnRaw.setEnabled(false);
+        }
 
         sonarDistanceSensor = new SonarDistanceSensor(this);
     }
